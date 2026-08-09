@@ -1,0 +1,59 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+    --rn-bg: #f7f8fa;
+    --rn-surface: #ffffff;
+    --rn-border: #e5e7eb;
+    --rn-text: #111827;
+    --rn-muted: #6b7280;
+    --rn-accent: #0f766e;
+    --rn-accent-soft: #ccfbf1;
+    --rn-success: #059669;
+    --rn-success-soft: #d1fae5;
+    --rn-warning: #d97706;
+    --rn-warning-soft: #fef3c7;
+    --rn-danger: #dc2626;
+    --rn-danger-soft: #fee2e2;
+    --rn-info: #0284c7;
+    --rn-info-soft: #e0f2fe;
+    --rn-radius: 14px;
+    --rn-shadow: 0 1px 2px rgb(15 23 42 / 0.04), 0 4px 16px rgb(15 23 42 / 0.04);
+}
+
+@layer base {
+    body {
+        @apply bg-rn-bg text-rn-text antialiased;
+        font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+    }
+}
+
+@layer components {
+    .rn-card {
+        @apply rounded-[var(--rn-radius)] border border-rn-border bg-rn-surface;
+        box-shadow: var(--rn-shadow);
+    }
+
+    .rn-focus {
+        @apply focus:border-rn-accent focus:outline-none focus:ring-2 focus:ring-rn-accent/30;
+    }
+
+    .rn-input {
+        @apply block w-full rounded-xl border-rn-border bg-rn-surface text-sm text-rn-text shadow-sm placeholder:text-rn-muted/70 rn-focus;
+    }
+
+    .rn-label {
+        @apply mb-1.5 block text-sm font-medium text-rn-text;
+    }
+
+    .rn-guest-pattern {
+        background-color: var(--rn-bg);
+        background-image:
+            radial-gradient(circle at 20% 20%, rgb(15 118 110 / 0.08), transparent 42%),
+            radial-gradient(circle at 80% 0%, rgb(2 132 199 / 0.06), transparent 36%),
+            linear-gradient(rgb(229 231 235 / 0.45) 1px, transparent 1px),
+            linear-gradient(90deg, rgb(229 231 235 / 0.45) 1px, transparent 1px);
+        background-size: auto, auto, 28px 28px, 28px 28px;
+    }
+}
