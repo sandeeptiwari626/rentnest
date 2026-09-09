@@ -15,7 +15,7 @@ defineProps({
     <div class="flex flex-col items-center justify-center px-6 py-12 text-center">
         <div
             v-if="$slots.icon"
-            class="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-rn-accent-soft text-rn-accent"
+            class="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-rn-ink text-rn-gold"
         >
             <slot name="icon" />
         </div>

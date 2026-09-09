@@ -125,9 +125,7 @@ class TenantController extends Controller
                     ]);
                 }
 
-                if ($user->current_organization_id === null) {
-                    $user->forceFill(['current_organization_id' => $orgId])->save();
-                }
+                $user->forceFill(['current_organization_id' => $orgId])->save();
 
                 $userId = $user->id;
             }

@@ -19,16 +19,10 @@ class EnsureOrganizationContext
             abort(403);
         }
 
+        $user->syncCurrentOrganization();
+
         if ($user->current_organization_id === null) {
-            $organization = $user->organizations()->first();
-
-            if ($organization === null) {
-                abort(403, 'No organization membership found.');
-            }
-
-            $user->forceFill([
-                'current_organization_id' => $organization->id,
-            ])->save();
+            abort(403, 'No organization membership found.');
         }
 
         return $next($request);

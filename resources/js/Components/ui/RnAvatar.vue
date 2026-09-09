@@ -39,7 +39,7 @@ const initials = computed(() => {
 
 <template>
     <div
-        class="inline-flex shrink-0 items-center justify-center overflow-hidden rounded-full bg-rn-accent-soft font-semibold text-rn-accent ring-2 ring-white"
+        class="inline-flex shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-rn-ink font-semibold text-rn-gold ring-1 ring-rn-gold/20"
         :class="sizeClass[size] || sizeClass.md"
     >
         <img

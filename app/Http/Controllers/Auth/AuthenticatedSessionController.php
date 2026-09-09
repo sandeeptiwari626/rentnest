@@ -20,6 +20,7 @@ class AuthenticatedSessionController extends Controller
     {
         return Inertia::render('Auth/Login', [
             'canResetPassword' => Route::has('password.request'),
+            'canRegister' => Route::has('register'),
             'status' => session('status'),
         ]);
     }
@@ -35,14 +36,8 @@ class AuthenticatedSessionController extends Controller
 
         $user = $request->user();
 
-        if ($user !== null && $user->current_organization_id === null) {
-            $organization = $user->organizations()->first();
-
-            if ($organization !== null) {
-                $user->forceFill([
-                    'current_organization_id' => $organization->id,
-                ])->save();
-            }
+        if ($user !== null) {
+            $user->syncCurrentOrganization();
         }
 
         $home = $user?->isLandlord()

@@ -49,16 +49,16 @@ const firstName = computed(() => props.userName?.split(' ')[0] || 'there');
     <Head title="Home" />
 
     <TenantLayout>
-        <div class="mx-auto max-w-3xl space-y-5">
+        <div class="mx-auto max-w-3xl space-y-6">
             <div>
                 <p class="text-sm font-medium text-rn-accent">
                     {{ greeting }}
                 </p>
-                <h1 class="mt-1 text-3xl font-semibold tracking-tight text-rn-text">
+                <h1 class="mt-1 font-brand text-4xl font-semibold tracking-tight text-rn-text">
                     {{ firstName }}
                 </h1>
-                <p class="mt-1 text-sm text-rn-muted">
-                    Here’s what’s happening with your home.
+                <p class="mt-2 text-sm text-rn-muted">
+                    Your home, kept in order.
                 </p>
             </div>
 
@@ -83,10 +83,10 @@ const firstName = computed(() => props.userName?.split(' ')[0] || 'there');
                 >
                     <div class="flex items-start justify-between gap-3">
                         <div class="min-w-0">
-                            <p class="text-xs font-semibold uppercase tracking-wide text-rn-muted">
-                                Your home
+                            <p class="rn-kicker">
+                                Your residence
                             </p>
-                            <h2 class="mt-1 text-xl font-semibold text-rn-text">
+                            <h2 class="mt-2 font-brand text-2xl font-semibold text-rn-text">
                                 {{ home.property_name }}
                             </h2>
                             <p v-if="home.unit_name" class="mt-0.5 text-sm text-rn-muted">
@@ -176,7 +176,7 @@ const firstName = computed(() => props.userName?.split(' ')[0] || 'there');
                 <div class="mt-4">
                     <Link
                         :href="route('tenant.payments.show', nextPayment.id)"
-                        class="inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-rn-accent-soft px-4 py-2 text-sm font-medium text-rn-accent transition hover:bg-teal-100 sm:w-auto"
+                    class="inline-flex min-h-11 w-full items-center justify-center rounded-2xl bg-rn-ink px-4 py-2 text-sm font-semibold text-rn-gold transition hover:bg-rn-accent sm:w-auto"
                     >
                         View payment
                     </Link>
@@ -186,13 +186,13 @@ const firstName = computed(() => props.userName?.split(' ')[0] || 'there');
             <div class="flex flex-wrap gap-2">
                 <Link
                     :href="route('tenant.maintenance.create')"
-                    class="inline-flex min-h-11 items-center justify-center rounded-xl bg-rn-accent px-5 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-teal-800"
+                    class="inline-flex min-h-11 items-center justify-center rounded-2xl bg-rn-accent px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-rn-ink"
                 >
                     Request maintenance
                 </Link>
                 <Link
                     :href="route('tenant.notices.index')"
-                    class="inline-flex min-h-11 items-center justify-center rounded-xl border border-rn-border bg-rn-surface px-5 py-2.5 text-sm font-medium text-rn-text transition hover:bg-rn-bg"
+                    class="inline-flex min-h-11 items-center justify-center rounded-2xl border border-rn-border bg-rn-surface px-5 py-2.5 text-sm font-semibold text-rn-text transition hover:border-rn-gold/40 hover:bg-white"
                 >
                     Notices
                 </Link>

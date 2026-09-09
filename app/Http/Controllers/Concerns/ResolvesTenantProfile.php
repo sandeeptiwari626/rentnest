@@ -10,16 +10,22 @@ trait ResolvesTenantProfile
     protected function tenantProfile(): Tenant
     {
         $user = Auth::user();
-        $tenant = $user?->tenantProfile;
 
-        if ($tenant === null) {
+        if ($user === null) {
             abort(403, 'No tenant profile linked to this account.');
         }
 
-        if (method_exists($this, 'organizationId')
-            && (int) $tenant->organization_id !== $this->organizationId()
-        ) {
-            abort(403, 'Tenant profile does not belong to the current organization.');
+        $organizationId = method_exists($this, 'organizationId')
+            ? $this->organizationId()
+            : $user->current_organization_id;
+
+        $tenant = Tenant::query()
+            ->where('user_id', $user->id)
+            ->when($organizationId, fn ($query) => $query->where('organization_id', $organizationId))
+            ->first();
+
+        if ($tenant === null) {
+            abort(403, 'No tenant profile linked to this account.');
         }
 
         return $tenant;

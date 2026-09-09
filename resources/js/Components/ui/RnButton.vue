@@ -26,22 +26,23 @@ const props = defineProps({
 
 const classes = computed(() => {
     const base =
-        'inline-flex items-center justify-center gap-2 rounded-xl font-medium transition focus:outline-none focus-visible:ring-2 focus-visible:ring-rn-accent/30 disabled:cursor-not-allowed disabled:opacity-50';
+        'inline-flex items-center justify-center gap-2 rounded-2xl font-semibold tracking-tight transition duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-rn-gold/40 disabled:cursor-not-allowed disabled:opacity-50';
 
     const sizes = {
-        sm: 'px-3 py-1.5 text-xs',
-        md: 'px-4 py-2 text-sm',
-        lg: 'px-5 py-2.5 text-sm',
+        sm: 'px-3.5 py-1.5 text-xs',
+        md: 'px-4 py-2.5 text-sm',
+        lg: 'px-6 py-3 text-sm',
     };
 
     const variants = {
         primary:
-            'bg-rn-accent text-white shadow-sm hover:bg-teal-800',
+            'bg-rn-accent text-white shadow-sm hover:bg-rn-ink',
         secondary:
-            'border border-rn-border bg-rn-surface text-rn-text hover:bg-rn-bg',
-        ghost: 'text-rn-muted hover:bg-rn-bg hover:text-rn-text',
-        danger: 'bg-rn-danger text-white shadow-sm hover:bg-red-700',
+            'border border-rn-border bg-rn-surface text-rn-text hover:border-rn-gold/50 hover:bg-white',
+        ghost: 'text-rn-muted hover:bg-white/70 hover:text-rn-text',
+        danger: 'bg-rn-danger text-white shadow-sm hover:bg-red-800',
         soft: 'bg-rn-accent-soft text-rn-accent hover:bg-teal-100',
+        gold: 'bg-rn-gold text-rn-ink hover:bg-[#b39062]',
     };
 
     return [base, sizes[props.size] || sizes.md, variants[props.variant] || variants.primary];

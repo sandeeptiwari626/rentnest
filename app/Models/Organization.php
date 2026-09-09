@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
 
 #[Fillable([
     'name',
@@ -20,6 +21,19 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Organization extends Model
 {
     use SoftDeletes;
+
+    public static function uniqueSlug(string $name): string
+    {
+        $base = Str::slug($name) ?: 'properties';
+        $slug = $base;
+        $i = 1;
+
+        while (static::withTrashed()->where('slug', $slug)->exists()) {
+            $slug = $base.'-'.$i++;
+        }
+
+        return $slug;
+    }
 
     /**
      * @return BelongsToMany<User, $this>

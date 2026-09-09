@@ -67,7 +67,63 @@ class User extends Authenticatable
      */
     public function tenantProfile(): HasOne
     {
-        return $this->hasOne(Tenant::class);
+        $relation = $this->hasOne(Tenant::class);
+
+        if ($this->current_organization_id !== null) {
+            $relation->where('tenants.organization_id', $this->current_organization_id);
+        }
+
+        return $relation;
+    }
+
+    /**
+     * Point current_organization_id at a membership that matches this user's tenant profile.
+     */
+    public function syncCurrentOrganization(): void
+    {
+        $memberships = $this->relationLoaded('organizations')
+            ? $this->organizations
+            : $this->organizations()->get();
+
+        if ($memberships->isEmpty()) {
+            return;
+        }
+
+        $membershipIds = $memberships->pluck('id')->map(fn ($id) => (int) $id);
+        $currentId = $this->current_organization_id !== null
+            ? (int) $this->current_organization_id
+            : null;
+
+        if ($currentId === null || ! $membershipIds->contains($currentId)) {
+            $currentId = $membershipIds->first();
+        }
+
+        $profileInCurrent = Tenant::query()
+            ->where('user_id', $this->id)
+            ->where('organization_id', $currentId)
+            ->exists();
+
+        if (! $profileInCurrent) {
+            $currentOrganization = $memberships->firstWhere('id', $currentId);
+
+            if ($this->organizationRole($currentOrganization) !== OrganizationRole::Landlord) {
+                $tenant = Tenant::query()
+                    ->where('user_id', $this->id)
+                    ->whereIn('organization_id', $membershipIds->all())
+                    ->latest('id')
+                    ->first();
+
+                if ($tenant !== null) {
+                    $currentId = (int) $tenant->organization_id;
+                }
+            }
+        }
+
+        if ((int) $this->current_organization_id !== (int) $currentId) {
+            $this->forceFill(['current_organization_id' => $currentId])->save();
+            $this->unsetRelation('tenantProfile');
+            $this->unsetRelation('currentOrganization');
+        }
     }
 
     public function organizationRole(?Organization $organization = null): ?OrganizationRole

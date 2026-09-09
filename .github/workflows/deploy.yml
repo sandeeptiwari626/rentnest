@@ -1,0 +1,89 @@
+name: Deploy RentNest
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  DEPLOY_PATH: /home/sites/10b/c/ccc8e1a045/public_html/rent
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install Node Packages
+        run: npm ci
+
+      - name: Build Vite Assets
+        run: npm run build:production
+
+      - name: Setup SSH key
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "${{ secrets.SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -p 22 -H "${{ secrets.SSH_HOST }}" >> ~/.ssh/known_hosts 2>/dev/null || true
+
+      - name: Deploy application (git pull + artisan)
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          DEPLOY_PATH: ${{ env.DEPLOY_PATH }}
+        run: |
+          ssh -i ~/.ssh/id_rsa \
+            -o StrictHostKeyChecking=no \
+            -o BatchMode=yes \
+            -o ConnectTimeout=30 \
+            -o ServerAliveInterval=15 \
+            -o ServerAliveCountMax=6 \
+            "${SSH_USER}@${SSH_HOST}" \
+            "DEPLOY_PATH='${DEPLOY_PATH}' bash -s" << 'EOF'
+          set -e
+          cd "$DEPLOY_PATH"
+
+          git fetch origin
+          git reset --hard origin/main
+
+          php84 artisan down || true
+          php84 artisan optimize:clear
+          php84 artisan migrate --force
+          php84 artisan storage:link || true
+          php84 artisan config:cache
+          php84 artisan route:clear
+          php84 artisan view:clear
+          php84 artisan view:cache
+          php84 artisan up
+
+          echo "Deploy complete."
+          EOF
+
+      - name: Upload public/build
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          DEPLOY_PATH: ${{ env.DEPLOY_PATH }}
+        run: |
+          ssh -i ~/.ssh/id_rsa \
+            -o StrictHostKeyChecking=no \
+            -o BatchMode=yes \
+            -o ConnectTimeout=30 \
+            "${SSH_USER}@${SSH_HOST}" \
+            "mkdir -p '${DEPLOY_PATH}/public/build'"
+
+          scp -i ~/.ssh/id_rsa \
+            -o StrictHostKeyChecking=no \
+            -r public/build/. \
+            "${SSH_USER}@${SSH_HOST}:${DEPLOY_PATH}/public/build/"
+
+          echo "Frontend build uploaded."

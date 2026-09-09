@@ -40,7 +40,7 @@ defineProps({
                                 <p class="text-xs font-semibold uppercase tracking-wide text-rn-muted">
                                     Property
                                 </p>
-                                <h2 class="mt-1 text-2xl font-semibold text-rn-text">
+                                <h2 class="mt-1 font-brand text-2xl font-semibold text-rn-text">
                                     {{ property.name }}
                                 </h2>
                                 <p v-if="property.type_label" class="mt-1 text-sm text-rn-muted">

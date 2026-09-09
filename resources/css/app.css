@@ -3,29 +3,43 @@
 @tailwind utilities;
 
 :root {
-    --rn-bg: #f7f8fa;
-    --rn-surface: #ffffff;
-    --rn-border: #e5e7eb;
-    --rn-text: #111827;
-    --rn-muted: #6b7280;
-    --rn-accent: #0f766e;
-    --rn-accent-soft: #ccfbf1;
-    --rn-success: #059669;
+    --rn-bg: #f4f1ea;
+    --rn-surface: #fffcf7;
+    --rn-border: #e6e0d4;
+    --rn-text: #14110e;
+    --rn-muted: #6f675c;
+    --rn-accent: #0d4f4a;
+    --rn-accent-soft: #dceee8;
+    --rn-gold: #c4a574;
+    --rn-ink: #0c1614;
+    --rn-success: #047857;
     --rn-success-soft: #d1fae5;
-    --rn-warning: #d97706;
+    --rn-warning: #b45309;
     --rn-warning-soft: #fef3c7;
-    --rn-danger: #dc2626;
+    --rn-danger: #b91c1c;
     --rn-danger-soft: #fee2e2;
-    --rn-info: #0284c7;
+    --rn-info: #0e7490;
     --rn-info-soft: #e0f2fe;
-    --rn-radius: 14px;
-    --rn-shadow: 0 1px 2px rgb(15 23 42 / 0.04), 0 4px 16px rgb(15 23 42 / 0.04);
+    --rn-radius: 18px;
+    --rn-shadow: 0 1px 1px rgb(20 17 14 / 0.03), 0 10px 28px rgb(20 17 14 / 0.05);
 }
 
 @layer base {
+    html {
+        scroll-behavior: smooth;
+    }
+
     body {
         @apply bg-rn-bg text-rn-text antialiased;
         font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+        background-image:
+            radial-gradient(ellipse 80% 50% at 0% -10%, rgb(196 165 116 / 0.12), transparent 50%),
+            radial-gradient(ellipse 60% 40% at 100% 0%, rgb(13 79 74 / 0.08), transparent 46%);
+        background-attachment: fixed;
+    }
+
+    ::selection {
+        background: rgb(13 79 74 / 0.18);
     }
 }
 
@@ -36,24 +50,32 @@
     }
 
     .rn-focus {
-        @apply focus:border-rn-accent focus:outline-none focus:ring-2 focus:ring-rn-accent/30;
+        @apply focus:border-rn-accent focus:outline-none focus:ring-2 focus:ring-rn-accent/25;
     }
 
     .rn-input {
-        @apply block w-full rounded-xl border-rn-border bg-rn-surface text-sm text-rn-text shadow-sm placeholder:text-rn-muted/70 rn-focus;
+        @apply block w-full rounded-2xl border-rn-border bg-white/80 text-sm text-rn-text shadow-sm placeholder:text-rn-muted/70 rn-focus;
     }
 
     .rn-label {
         @apply mb-1.5 block text-sm font-medium text-rn-text;
     }
 
+    .rn-kicker {
+        @apply text-[11px] font-semibold uppercase tracking-[0.22em] text-rn-gold;
+    }
+
     .rn-guest-pattern {
         background-color: var(--rn-bg);
         background-image:
-            radial-gradient(circle at 20% 20%, rgb(15 118 110 / 0.08), transparent 42%),
-            radial-gradient(circle at 80% 0%, rgb(2 132 199 / 0.06), transparent 36%),
-            linear-gradient(rgb(229 231 235 / 0.45) 1px, transparent 1px),
-            linear-gradient(90deg, rgb(229 231 235 / 0.45) 1px, transparent 1px);
-        background-size: auto, auto, 28px 28px, 28px 28px;
+            radial-gradient(circle at 18% 12%, rgb(196 165 116 / 0.16), transparent 38%),
+            radial-gradient(circle at 88% 0%, rgb(13 79 74 / 0.1), transparent 34%);
+    }
+
+    .rn-ink-panel {
+        background-color: var(--rn-ink);
+        background-image:
+            radial-gradient(circle at 12% 18%, rgb(196 165 116 / 0.16), transparent 36%),
+            radial-gradient(circle at 90% 88%, rgb(13 79 74 / 0.55), transparent 42%);
     }
 }

@@ -89,27 +89,30 @@ const markAllRead = () => {
 
         <!-- Desktop slim sidebar -->
         <aside
-            class="fixed inset-y-0 left-0 z-40 hidden w-56 flex-col border-r border-rn-border bg-rn-surface md:flex"
+            class="fixed inset-y-0 left-0 z-40 hidden w-60 flex-col border-r border-rn-border bg-rn-surface/90 md:flex"
         >
-            <div class="flex h-16 items-center px-5">
+            <div class="flex h-[4.25rem] items-center px-5">
                 <Link :href="safeRoute('tenant.home')">
                     <RnBrand size="md" />
                 </Link>
             </div>
+            <p class="px-5 pb-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-rn-gold">
+                Resident
+            </p>
 
-            <nav class="flex-1 space-y-0.5 px-3 py-2">
+            <nav class="flex-1 space-y-0.5 px-3 py-1">
                 <Link
                     v-for="item in sidebarNav"
                     :key="item.name"
                     :href="safeRoute(item.href)"
-                    class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition"
+                    class="flex items-center gap-3 rounded-2xl px-3 py-2.5 text-sm font-medium transition"
                     :class="
                         isActive(item.href)
-                            ? 'bg-rn-accent-soft text-rn-accent'
+                            ? 'bg-rn-ink text-rn-surface'
                             : 'text-rn-muted hover:bg-rn-bg hover:text-rn-text'
                     "
                 >
-                    <component :is="item.icon" class="h-5 w-5 shrink-0" />
+                    <component :is="item.icon" class="h-5 w-5 shrink-0" :class="isActive(item.href) ? 'text-rn-gold' : ''" />
                     <span class="truncate">{{ item.name }}</span>
                 </Link>
             </nav>
@@ -130,9 +133,9 @@ const markAllRead = () => {
         </aside>
 
         <!-- Main column -->
-        <div class="md:pl-56">
+        <div class="md:pl-60">
             <header
-                class="sticky top-0 z-30 flex h-14 items-center justify-between gap-3 border-b border-rn-border bg-rn-surface/90 px-4 backdrop-blur sm:h-16 sm:px-6"
+                class="sticky top-0 z-30 flex h-14 items-center justify-between gap-3 border-b border-rn-border/80 bg-rn-surface/80 px-4 backdrop-blur-xl sm:h-[4.25rem] sm:px-6"
             >
                 <div class="flex items-center gap-3 md:hidden">
                     <RnBrand size="sm" />
@@ -151,7 +154,7 @@ const markAllRead = () => {
                                 <BellIcon class="h-5 w-5" />
                                 <span
                                     v-if="unreadCount"
-                                    class="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-rn-accent"
+                                    class="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-rn-gold"
                                 />
                             </button>
                         </template>
@@ -200,7 +203,7 @@ const markAllRead = () => {
                 </div>
             </header>
 
-            <main class="px-4 py-5 sm:px-6 sm:py-6 lg:px-8">
+            <main class="px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
                 <div class="mb-4 md:hidden" v-if="$slots.header">
                     <slot name="header" />
                 </div>
@@ -217,10 +220,10 @@ const markAllRead = () => {
                     v-for="item in bottomNav"
                     :key="item.name"
                     :href="safeRoute(item.href)"
-                    class="flex flex-col items-center gap-0.5 rounded-xl px-1 py-2 text-[10px] font-medium transition"
+                    class="flex flex-col items-center gap-0.5 rounded-2xl px-1 py-2 text-[10px] font-medium transition"
                     :class="
                         isActive(item.href)
-                            ? 'text-rn-accent'
+                            ? 'text-rn-ink'
                             : 'text-rn-muted'
                     "
                 >

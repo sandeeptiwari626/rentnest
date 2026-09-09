@@ -13,9 +13,10 @@ use App\Http\Controllers\Landlord\SettingsController;
 use App\Http\Controllers\Landlord\TenantController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Shared\NotificationController;
+use App\Http\Controllers\WelcomeController;
 use Illuminate\Support\Facades\Route;
 
-Route::redirect('/', '/login');
+Route::get('/', WelcomeController::class)->name('home');
 
 Route::get('/dashboard', function () {
     $user = auth()->user();

@@ -112,26 +112,32 @@ watch(
         <!-- Mobile overlay -->
         <div
             v-if="sidebarOpen"
-            class="fixed inset-0 z-40 bg-slate-900/40 lg:hidden"
+            class="fixed inset-0 z-40 bg-rn-ink/50 backdrop-blur-sm lg:hidden"
             @click="sidebarOpen = false"
         />
 
         <!-- Sidebar -->
         <aside
-            class="fixed inset-y-0 left-0 z-50 flex w-64 flex-col border-r border-rn-border bg-rn-surface transition-transform duration-200 lg:translate-x-0"
+            class="rn-ink-panel fixed inset-y-0 left-0 z-50 flex w-64 flex-col text-rn-surface transition-transform duration-200 lg:translate-x-0"
             :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
         >
-            <div class="flex h-16 items-center justify-between px-5">
+            <div class="flex h-[4.25rem] items-center justify-between px-5">
                 <Link :href="safeRoute('landlord.dashboard')">
-                    <RnBrand size="md" />
+                    <RnBrand size="md" variant="light" />
                 </Link>
                 <button
                     type="button"
-                    class="rounded-lg p-1.5 text-rn-muted hover:bg-rn-bg lg:hidden"
+                    class="rounded-lg p-1.5 text-white/50 hover:bg-white/10 hover:text-white lg:hidden"
                     @click="sidebarOpen = false"
                 >
                     <XMarkIcon class="h-5 w-5" />
                 </button>
+            </div>
+
+            <div v-if="page.props.organization?.name" class="px-5 pb-3">
+                <p class="truncate text-[11px] font-semibold uppercase tracking-[0.18em] text-rn-gold/80">
+                    {{ page.props.organization.name }}
+                </p>
             </div>
 
             <nav class="flex-1 space-y-0.5 overflow-y-auto px-3 py-2">
@@ -139,31 +145,31 @@ watch(
                     v-for="item in mainNav"
                     :key="item.name"
                     :href="safeRoute(item.href)"
-                    class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition"
+                    class="flex items-center gap-3 rounded-2xl px-3 py-2.5 text-sm font-medium transition"
                     :class="
                         isActive(item.href)
-                            ? 'bg-rn-accent-soft text-rn-accent'
-                            : 'text-rn-muted hover:bg-rn-bg hover:text-rn-text'
+                            ? 'bg-white/10 text-white shadow-sm ring-1 ring-rn-gold/30'
+                            : 'text-white/55 hover:bg-white/5 hover:text-white'
                     "
                 >
-                    <component :is="item.icon" class="h-5 w-5 shrink-0" />
+                    <component :is="item.icon" class="h-5 w-5 shrink-0" :class="isActive(item.href) ? 'text-rn-gold' : ''" />
                     {{ item.name }}
                 </Link>
             </nav>
 
-            <div class="space-y-0.5 border-t border-rn-border px-3 py-3">
+            <div class="space-y-0.5 border-t border-white/10 px-3 py-3">
                 <Link
                     v-for="item in bottomNav"
                     :key="item.name"
                     :href="safeRoute(item.href)"
-                    class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-rn-muted transition hover:bg-rn-bg hover:text-rn-text"
+                    class="flex items-center gap-3 rounded-2xl px-3 py-2.5 text-sm font-medium text-white/55 transition hover:bg-white/5 hover:text-white"
                 >
                     <component :is="item.icon" class="h-5 w-5 shrink-0" />
                     {{ item.name }}
                 </Link>
                 <button
                     type="button"
-                    class="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-rn-muted transition hover:bg-rn-bg hover:text-rn-text"
+                    class="flex w-full items-center gap-3 rounded-2xl px-3 py-2.5 text-sm font-medium text-white/55 transition hover:bg-white/5 hover:text-white"
                     @click="logout"
                 >
                     <ArrowRightOnRectangleIcon class="h-5 w-5 shrink-0" />
@@ -175,7 +181,7 @@ watch(
         <!-- Main -->
         <div class="lg:pl-64">
             <header
-                class="sticky top-0 z-30 flex h-16 items-center justify-between gap-3 border-b border-rn-border bg-rn-surface/90 px-4 backdrop-blur sm:px-6"
+                class="sticky top-0 z-30 flex h-[4.25rem] items-center justify-between gap-3 border-b border-rn-border/80 bg-rn-surface/80 px-4 backdrop-blur-xl sm:px-6"
             >
                 <div class="flex items-center gap-3">
                     <button
@@ -195,12 +201,12 @@ watch(
                         <template #trigger>
                             <button
                                 type="button"
-                                class="relative rounded-xl border border-rn-border p-2 text-rn-muted transition hover:bg-rn-bg hover:text-rn-text"
+                        class="relative rounded-2xl border border-rn-border p-2 text-rn-muted transition hover:bg-white hover:text-rn-text"
                             >
                                 <BellIcon class="h-5 w-5" />
                                 <span
                                     v-if="unreadCount"
-                                    class="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-rn-accent"
+                                    class="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-rn-gold"
                                 />
                             </button>
                         </template>
@@ -244,7 +250,7 @@ watch(
                         <template #trigger>
                             <button
                                 type="button"
-                                class="flex items-center gap-2 rounded-xl border border-rn-border py-1.5 pl-1.5 pr-3 transition hover:bg-rn-bg"
+                                class="flex items-center gap-2 rounded-2xl border border-rn-border bg-white/60 py-1.5 pl-1.5 pr-3 transition hover:bg-white"
                             >
                                 <RnAvatar :name="user?.name || 'User'" size="sm" />
                                 <span class="hidden max-w-[8rem] truncate text-sm font-medium text-rn-text sm:inline">
@@ -269,7 +275,7 @@ watch(
                 </div>
             </header>
 
-            <main class="px-4 py-6 sm:px-6 lg:px-8">
+            <main class="px-4 py-7 sm:px-6 lg:px-8">
                 <div class="sm:hidden" v-if="$slots.header">
                     <div class="mb-4">
                         <slot name="header" />

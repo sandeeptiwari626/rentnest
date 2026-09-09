@@ -11,6 +11,7 @@ import {
     BuildingOffice2Icon,
     CurrencyRupeeIcon,
     HomeModernIcon,
+    UserPlusIcon,
     WrenchScrewdriverIcon,
 } from '@heroicons/vue/24/outline';
 
@@ -21,6 +22,10 @@ defineProps({
     recentPayments: Array,
     recentMaintenance: Array,
     upcoming: Object,
+    onboarding: {
+        type: Object,
+        default: () => ({ has_properties: true, has_tenants: true }),
+    },
 });
 
 const money = (n) => `₹${Number(n || 0).toLocaleString('en-IN')}`;
@@ -31,13 +36,34 @@ const dateLabel = (d) => (d ? new Date(d).toLocaleDateString('en-IN', { day: 'nu
     <Head title="Dashboard" />
 
     <LandlordLayout>
-        <RnPageHeader :title="greeting" subtitle="Here’s what’s happening across your properties today.">
+        <RnPageHeader :title="greeting" subtitle="A calm view of everything you own today.">
             <template #actions>
+                <Link :href="route('landlord.tenants.create')">
+                    <RnButton variant="secondary">
+                        <UserPlusIcon class="h-4 w-4" />
+                        Add tenant
+                    </RnButton>
+                </Link>
                 <Link :href="route('landlord.properties.create')">
                     <RnButton>Add property</RnButton>
                 </Link>
             </template>
         </RnPageHeader>
+
+        <RnCard v-if="!onboarding.has_properties || !onboarding.has_tenants" class="mb-6">
+            <template #title>Get started</template>
+            <template #subtitle>Add a property and a tenant, then you can create a lease.</template>
+            <div class="flex flex-wrap gap-3">
+                <Link v-if="!onboarding.has_properties" :href="route('landlord.properties.create')">
+                    <RnButton>Add your first property</RnButton>
+                </Link>
+                <Link v-if="!onboarding.has_tenants" :href="route('landlord.tenants.create')">
+                    <RnButton :variant="onboarding.has_properties ? 'primary' : 'secondary'">
+                        Add your first tenant
+                    </RnButton>
+                </Link>
+            </div>
+        </RnCard>
 
         <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
             <RnStatCard label="Properties" :value="stats.total_properties">

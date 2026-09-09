@@ -12,6 +12,7 @@ use App\Models\MaintenanceRequest;
 use App\Models\Notice;
 use App\Models\Property;
 use App\Models\RentPayment;
+use App\Models\Tenant;
 use App\Models\Unit;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -56,6 +57,8 @@ class DashboardController extends Controller
             ->forOrganization($orgId)
             ->whereNotIn('status', [MaintenanceStatus::Resolved, MaintenanceStatus::Closed])
             ->count();
+
+        $hasTenants = Tenant::query()->forOrganization($orgId)->exists();
 
         $propertyOverview = Lease::query()
             ->forOrganization($orgId)
@@ -201,6 +204,10 @@ class DashboardController extends Controller
                 'lease_expiries' => $leaseExpiries,
                 'scheduled_maintenance' => $scheduledMaintenance,
                 'notices' => $notices,
+            ],
+            'onboarding' => [
+                'has_properties' => $totalProperties > 0,
+                'has_tenants' => $hasTenants,
             ],
         ]);
     }

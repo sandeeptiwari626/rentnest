@@ -27,14 +27,14 @@ defineProps({
     <div class="rn-card p-5">
         <div class="flex items-start justify-between gap-3">
             <div>
-                <p class="text-sm font-medium text-rn-muted">{{ label }}</p>
-                <p class="mt-2 text-2xl font-semibold tracking-tight text-rn-text">
+                <p class="text-[11px] font-semibold uppercase tracking-[0.16em] text-rn-muted">{{ label }}</p>
+                <p class="mt-2 font-brand text-2xl font-semibold tracking-tight text-rn-text">
                     {{ value }}
                 </p>
             </div>
             <div
                 v-if="$slots.icon"
-                class="flex h-10 w-10 items-center justify-center rounded-xl bg-rn-accent-soft text-rn-accent"
+                class="flex h-11 w-11 items-center justify-center rounded-2xl bg-rn-ink text-rn-gold"
             >
                 <slot name="icon" />
             </div>

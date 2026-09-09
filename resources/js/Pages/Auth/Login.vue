@@ -10,6 +10,10 @@ defineProps({
     canResetPassword: {
         type: Boolean,
     },
+    canRegister: {
+        type: Boolean,
+        default: true,
+    },
     status: {
         type: String,
     },
@@ -33,11 +37,11 @@ const submit = () => {
         <Head title="Log in" />
 
         <div class="mb-6">
-            <h1 class="text-xl font-semibold tracking-tight text-rn-text">
+            <h1 class="font-brand text-2xl font-semibold tracking-tight text-rn-text">
                 Welcome back
             </h1>
             <p class="mt-1 text-sm text-rn-muted">
-                Sign in to manage your rentals and tenancy.
+                Sign in to your private workspace.
             </p>
         </div>
 
@@ -96,6 +100,17 @@ const submit = () => {
         </form>
 
         <p class="mt-6 text-center text-sm text-rn-muted">
+            Landlord?
+            <Link
+                v-if="canRegister"
+                :href="route('register')"
+                class="font-medium text-rn-accent hover:text-teal-800"
+            >
+                Create an account
+            </Link>
+            <span v-else>Ask your administrator for access.</span>
+        </p>
+        <p class="mt-2 text-center text-sm text-rn-muted">
             Tenant access is invite-only. Contact your landlord for an account.
         </p>
     </GuestLayout>

@@ -17,9 +17,11 @@ class RentNestSmokeTest extends TestCase
         $this->seed(DemoSeeder::class);
     }
 
-    public function test_guest_is_redirected_to_login(): void
+    public function test_guest_sees_landing_page(): void
     {
-        $this->get('/')->assertRedirect('/login');
+        $this->get('/')
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page->component('Welcome'));
     }
 
     public function test_landlord_can_access_dashboard(): void

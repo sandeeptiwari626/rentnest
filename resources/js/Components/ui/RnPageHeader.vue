@@ -14,7 +14,7 @@ defineProps({
 <template>
     <div class="mb-6 flex flex-col gap-4 sm:mb-8 sm:flex-row sm:items-end sm:justify-between">
         <div class="min-w-0">
-            <h1 class="text-2xl font-semibold tracking-tight text-rn-text">
+            <h1 class="font-brand text-3xl font-semibold tracking-tight text-rn-text sm:text-[2.05rem]">
                 {{ title }}
             </h1>
             <p v-if="subtitle" class="mt-1 text-sm text-rn-muted">
