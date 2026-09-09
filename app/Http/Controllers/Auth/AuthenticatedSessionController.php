@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Services\TenantPortalNoticeService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -38,6 +39,10 @@ class AuthenticatedSessionController extends Controller
 
         if ($user !== null) {
             $user->syncCurrentOrganization();
+        }
+
+        if ($user?->isTenant() && app(TenantPortalNoticeService::class)->userMustAcknowledge($user)) {
+            return redirect()->route('tenant.legal-notice.show');
         }
 
         $home = $user?->isLandlord()

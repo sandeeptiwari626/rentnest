@@ -13,6 +13,7 @@ defineProps({ organization: Object });
     <LandlordLayout>
         <RnPageHeader title="Settings" subtitle="Organization details for your RentNest workspace.">
             <template #actions>
+                <Link :href="route('landlord.portal-notice.index')"><RnButton variant="secondary">Portal notice</RnButton></Link>
                 <Link :href="route('profile.edit')"><RnButton variant="secondary">Edit profile</RnButton></Link>
             </template>
         </RnPageHeader>

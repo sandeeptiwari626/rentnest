@@ -46,6 +46,7 @@ const mainNav = [
 
 const bottomNav = [
     { name: 'Settings', href: 'landlord.settings.index', icon: Cog6ToothIcon },
+    { name: 'Portal notice', href: 'landlord.portal-notice.index', icon: DocumentTextIcon },
     { name: 'Profile', href: 'profile.edit', icon: UserCircleIcon },
 ];
 

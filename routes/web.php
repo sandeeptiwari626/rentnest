@@ -7,6 +7,7 @@ use App\Http\Controllers\Landlord\LeaseController;
 use App\Http\Controllers\Landlord\MaintenanceController;
 use App\Http\Controllers\Landlord\NoticeController;
 use App\Http\Controllers\Landlord\PaymentController;
+use App\Http\Controllers\Landlord\PortalNoticeController;
 use App\Http\Controllers\Landlord\PropertyController;
 use App\Http\Controllers\Landlord\ReportController;
 use App\Http\Controllers\Landlord\SettingsController;
@@ -85,6 +86,11 @@ Route::middleware(['auth', 'verified', 'organization', 'role:landlord'])
 
         Route::get('reports', [ReportController::class, 'index'])->name('reports.index');
         Route::get('settings', [SettingsController::class, 'index'])->name('settings.index');
+        Route::get('portal-notice', [PortalNoticeController::class, 'index'])->name('portal-notice.index');
+        Route::get('portal-notice/create', [PortalNoticeController::class, 'create'])->name('portal-notice.create');
+        Route::post('portal-notice', [PortalNoticeController::class, 'store'])->name('portal-notice.store');
+        Route::post('portal-notice/{portalNotice}/activate', [PortalNoticeController::class, 'activate'])
+            ->name('portal-notice.activate');
     });
 
 require __DIR__.'/tenant.php';

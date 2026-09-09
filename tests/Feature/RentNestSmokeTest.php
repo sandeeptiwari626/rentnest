@@ -45,6 +45,7 @@ class RentNestSmokeTest extends TestCase
     public function test_tenant_can_access_home(): void
     {
         $tenant = User::where('email', 'tenant@rentnest.test')->firstOrFail();
+        $this->acknowledgeCurrentPortalNotice($tenant);
 
         $this->actingAs($tenant)
             ->get('/tenant/home')
@@ -73,11 +74,13 @@ class RentNestSmokeTest extends TestCase
         $this->actingAs($landlord)->get('/landlord/expenses')->assertOk();
         $this->actingAs($landlord)->get('/landlord/notices')->assertOk();
         $this->actingAs($landlord)->get('/landlord/reports')->assertOk();
+        $this->actingAs($landlord)->get('/landlord/portal-notice')->assertOk();
     }
 
     public function test_tenant_portal_pages(): void
     {
         $tenant = User::where('email', 'tenant@rentnest.test')->firstOrFail();
+        $this->acknowledgeCurrentPortalNotice($tenant);
 
         $this->actingAs($tenant)->get('/tenant/my-home')->assertOk();
         $this->actingAs($tenant)->get('/tenant/payments')->assertOk();
@@ -98,6 +101,6 @@ class RentNestSmokeTest extends TestCase
         $this->post('/login', [
             'email' => 'tenant@rentnest.test',
             'password' => 'password',
-        ])->assertRedirect('/tenant/home');
+        ])->assertRedirect('/tenant/legal-notice');
     }
 }

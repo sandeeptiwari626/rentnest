@@ -19,6 +19,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'role' => \App\Http\Middleware\EnsureUserHasRole::class,
             'organization' => \App\Http\Middleware\EnsureOrganizationContext::class,
+            'tenant.notice' => \App\Http\Middleware\EnsureTenantPortalNoticeAcknowledged::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

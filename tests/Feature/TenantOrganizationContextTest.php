@@ -43,6 +43,8 @@ class TenantOrganizationContextTest extends TestCase
             'email' => $user->email,
         ]);
 
+        $this->acknowledgeCurrentPortalNotice($user, $newOrg);
+
         $this->actingAs($user)
             ->get('/tenant/home')
             ->assertOk();
@@ -89,7 +91,10 @@ class TenantOrganizationContextTest extends TestCase
 
         $this->assertSame($landlordOrg->id, $existing->fresh()->current_organization_id);
 
-        $this->actingAs($existing->fresh())
+        $invited = $existing->fresh();
+        $this->acknowledgeCurrentPortalNotice($invited);
+
+        $this->actingAs($invited)
             ->get('/tenant/home')
             ->assertOk();
     }
