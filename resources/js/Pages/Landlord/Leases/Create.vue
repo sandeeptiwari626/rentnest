@@ -9,6 +9,7 @@ import RnInput from '@/Components/ui/RnInput.vue';
 import RnSelect from '@/Components/ui/RnSelect.vue';
 import RnTextarea from '@/Components/ui/RnTextarea.vue';
 import RnFileUploader from '@/Components/ui/RnFileUploader.vue';
+import RnFormErrors from '@/Components/ui/RnFormErrors.vue';
 
 const props = defineProps({
     properties: Array,
@@ -63,7 +64,9 @@ watch(
 );
 
 const submit = () => {
-    form.post(route('landlord.leases.store'), { forceFormData: true });
+    form.post(route('landlord.leases.store'), {
+        forceFormData: Boolean(form.lease_document),
+    });
 };
 </script>
 
@@ -77,6 +80,7 @@ const submit = () => {
         </RnPageHeader>
 
         <form class="mx-auto max-w-3xl space-y-6" @submit.prevent="submit">
+            <RnFormErrors :form="form" />
             <RnCard>
                 <div class="grid gap-4 sm:grid-cols-2">
                     <RnSelect v-model="form.property_id" label="Property" :options="propertyOptions" required :error="form.errors.property_id" />
@@ -94,7 +98,12 @@ const submit = () => {
             </RnCard>
             <RnCard>
                 <template #title>Lease document</template>
-                <RnFileUploader accepts=".pdf,image/*" @update:files="form.lease_document = $event[0] || null" />
+                <RnFileUploader
+                    accepts=".pdf,image/*"
+                    label="Lease PDF or image"
+                    hint="Optional — PDF or image, max 8 MB"
+                    @update:files="form.lease_document = $event[0] || null"
+                />
             </RnCard>
             <div class="flex justify-end"><RnButton type="submit" :loading="form.processing">Create lease</RnButton></div>
         </form>

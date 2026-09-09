@@ -8,6 +8,7 @@ import RnInput from '@/Components/ui/RnInput.vue';
 import RnSelect from '@/Components/ui/RnSelect.vue';
 import RnTextarea from '@/Components/ui/RnTextarea.vue';
 import RnFileUploader from '@/Components/ui/RnFileUploader.vue';
+import RnFormErrors from '@/Components/ui/RnFormErrors.vue';
 
 defineProps({
     typeOptions: Array,
@@ -57,12 +58,7 @@ const submit = () => {
         </RnPageHeader>
 
         <form class="mx-auto max-w-3xl space-y-6" @submit.prevent="submit">
-            <div
-                v-if="Object.keys(form.errors).length"
-                class="rounded-2xl border border-rn-danger/30 bg-rn-danger/5 px-4 py-3 text-sm text-rn-danger"
-            >
-                Please fix the highlighted fields and try again.
-            </div>
+            <RnFormErrors :form="form" />
 
             <RnCard>
                 <template #title>Basics</template>
@@ -96,7 +92,7 @@ const submit = () => {
                     accepts="image/*"
                     multiple
                     label="Property photos"
-                    hint="Up to 10 images, 5MB each"
+                    hint="Up to 10 images, 4 MB each"
                     @update:files="form.photos = $event"
                 />
                 <p v-if="form.errors.photos" class="mt-2 text-sm text-rn-danger">{{ form.errors.photos }}</p>

@@ -41,7 +41,7 @@ class UpdateLeaseRequest extends FormRequest
             'notice_period_days' => ['nullable', 'integer', 'min:0', 'max:365'],
             'status' => ['required', Rule::enum(LeaseStatus::class)],
             'notes' => ['nullable', 'string', 'max:5000'],
-            'lease_document' => ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:10240'],
+            'lease_document' => ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:8192'],
         ];
     }
 }

@@ -25,7 +25,7 @@ class StoreMaintenanceRequest extends FormRequest
             'category' => ['required', Rule::enum(MaintenanceCategory::class)],
             'priority' => ['required', Rule::enum(MaintenancePriority::class)],
             'photos' => ['nullable', 'array', 'max:5'],
-            'photos.*' => ['image', 'max:5120'],
+            'photos.*' => ['image', 'max:4096'],
         ];
     }
 

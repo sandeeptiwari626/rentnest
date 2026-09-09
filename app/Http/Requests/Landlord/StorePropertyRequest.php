@@ -48,7 +48,7 @@ class StorePropertyRequest extends FormRequest
             'area_unit' => ['nullable', 'string', 'max:20'],
             'rent_amount' => ['nullable', 'numeric', 'min:0'],
             'photos' => ['nullable', 'array', 'max:10'],
-            'photos.*' => ['image', 'max:5120'],
+            'photos.*' => ['image', 'max:4096'],
         ];
     }
 }

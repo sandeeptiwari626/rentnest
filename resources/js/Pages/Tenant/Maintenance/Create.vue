@@ -6,6 +6,7 @@ import TenantLayout from '@/Layouts/TenantLayout.vue';
 import RnButton from '@/Components/ui/RnButton.vue';
 import RnCard from '@/Components/ui/RnCard.vue';
 import RnFileUploader from '@/Components/ui/RnFileUploader.vue';
+import RnFormErrors from '@/Components/ui/RnFormErrors.vue';
 import RnInput from '@/Components/ui/RnInput.vue';
 import RnPageHeader from '@/Components/ui/RnPageHeader.vue';
 import RnSelect from '@/Components/ui/RnSelect.vue';
@@ -30,7 +31,7 @@ const form = useForm({
 const submit = () => {
     form.photos = photos.value;
     form.post(route('tenant.maintenance.store'), {
-        forceFormData: true,
+        forceFormData: photos.value.length > 0,
     });
 };
 </script>
@@ -61,6 +62,7 @@ const submit = () => {
 
             <RnCard>
                 <form class="space-y-5" @submit.prevent="submit">
+                    <RnFormErrors :form="form" />
                     <RnInput
                         id="title"
                         v-model="form.title"

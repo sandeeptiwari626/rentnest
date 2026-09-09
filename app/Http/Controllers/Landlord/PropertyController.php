@@ -11,6 +11,7 @@ use App\Http\Requests\Landlord\StorePropertyRequest;
 use App\Http\Requests\Landlord\UpdatePropertyRequest;
 use App\Models\Property;
 use App\Models\Unit;
+use App\Support\PrivateUpload;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -129,7 +130,7 @@ class PropertyController extends Controller
                         continue;
                     }
 
-                    $paths[] = $photo->store("properties/{$property->id}", 'local');
+                    $paths[] = PrivateUpload::store($photo, "properties/{$property->id}", 'photos');
                 }
 
                 if ($paths !== []) {
@@ -261,7 +262,7 @@ class PropertyController extends Controller
 
         if ($request->hasFile('photos')) {
             foreach ($request->file('photos') as $photo) {
-                $photos->push($photo->store("properties/{$property->id}", 'local'));
+                $photos->push(PrivateUpload::store($photo, "properties/{$property->id}", 'photos'));
             }
         }
 

@@ -12,6 +12,7 @@ use App\Models\Lease;
 use App\Models\Property;
 use App\Models\Tenant;
 use App\Models\Unit;
+use App\Support\PrivateUpload;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -82,7 +83,7 @@ class LeaseController extends Controller
         $lease = DB::transaction(function () use ($request, $orgId, $data) {
             $path = null;
             if ($request->hasFile('lease_document')) {
-                $path = $request->file('lease_document')->store('leases', 'local');
+                $path = PrivateUpload::store($request->file('lease_document'), 'leases', 'lease_document');
             }
 
             $lease = Lease::query()->create([
@@ -249,7 +250,11 @@ class LeaseController extends Controller
             if ($lease->lease_document_path) {
                 Storage::disk('local')->delete($lease->lease_document_path);
             }
-            $data['lease_document_path'] = $request->file('lease_document')->store('leases', 'local');
+            $data['lease_document_path'] = PrivateUpload::store(
+                $request->file('lease_document'),
+                'leases',
+                'lease_document'
+            );
         }
 
         $lease->update($data);

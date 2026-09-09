@@ -14,6 +14,7 @@ use App\Http\Requests\Tenant\StoreMaintenanceRequest;
 use App\Models\Lease;
 use App\Models\MaintenanceComment;
 use App\Models\MaintenanceRequest;
+use App\Support\PrivateUpload;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
@@ -92,7 +93,7 @@ class MaintenanceController extends Controller
         $photoPaths = [];
         if ($request->hasFile('photos')) {
             foreach ($request->file('photos') as $photo) {
-                $photoPaths[] = $photo->store('maintenance/'.$tenant->id, 'local');
+                $photoPaths[] = PrivateUpload::store($photo, 'maintenance/'.$tenant->id, 'photos');
             }
         }
 

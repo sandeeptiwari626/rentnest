@@ -13,6 +13,7 @@ use App\Models\Property;
 use App\Models\Tenant;
 use App\Models\User;
 use App\Notifications\DocumentUploadedNotification;
+use App\Support\PrivateUpload;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Notification;
@@ -94,7 +95,7 @@ class DocumentController extends Controller
         $this->authorize('create', Document::class);
 
         $file = $request->file('file');
-        $path = $file->store('documents/'.$this->organizationId(), 'local');
+        $path = PrivateUpload::store($file, 'documents/'.$this->organizationId());
 
         [$type, $id] = $this->resolveDocumentable($request);
 

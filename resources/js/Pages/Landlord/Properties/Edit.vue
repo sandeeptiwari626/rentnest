@@ -8,6 +8,7 @@ import RnInput from '@/Components/ui/RnInput.vue';
 import RnSelect from '@/Components/ui/RnSelect.vue';
 import RnTextarea from '@/Components/ui/RnTextarea.vue';
 import RnFileUploader from '@/Components/ui/RnFileUploader.vue';
+import RnFormErrors from '@/Components/ui/RnFormErrors.vue';
 
 const props = defineProps({
     property: Object,
@@ -39,10 +40,13 @@ const removeExisting = (path) => {
 };
 
 const submit = () => {
-    form.transform((data) => ({ ...data, _method: 'put' }))
-        .post(route('landlord.properties.update', props.property.id), {
-            forceFormData: true,
-        });
+    form.transform((data) => ({
+        ...data,
+        _method: 'put',
+        photos: data.photos?.length ? data.photos : undefined,
+    })).post(route('landlord.properties.update', props.property.id), {
+        forceFormData: form.photos.length > 0 || form.remove_photos.length > 0,
+    });
 };
 </script>
 
@@ -56,6 +60,7 @@ const submit = () => {
         </RnPageHeader>
 
         <form class="mx-auto max-w-3xl space-y-6" @submit.prevent="submit">
+            <RnFormErrors :form="form" />
             <RnCard>
                 <div class="grid gap-4 sm:grid-cols-2">
                     <RnInput v-model="form.name" label="Property name" required :error="form.errors.name" class="sm:col-span-2" />

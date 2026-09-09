@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Landlord\StoreExpenseRequest;
 use App\Models\Expense;
 use App\Models\Property;
+use App\Support\PrivateUpload;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -101,7 +102,11 @@ class ExpenseController extends Controller
 
         $receiptPath = null;
         if ($request->hasFile('receipt')) {
-            $receiptPath = $request->file('receipt')->store('expenses/'.$this->organizationId(), 'local');
+            $receiptPath = PrivateUpload::store(
+                $request->file('receipt'),
+                'expenses/'.$this->organizationId(),
+                'receipt'
+            );
         }
 
         $expense = Expense::query()->create([

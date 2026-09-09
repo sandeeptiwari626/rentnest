@@ -8,6 +8,7 @@ import RnButton from '@/Components/ui/RnButton.vue';
 import RnInput from '@/Components/ui/RnInput.vue';
 import RnSelect from '@/Components/ui/RnSelect.vue';
 import RnFileUploader from '@/Components/ui/RnFileUploader.vue';
+import RnFormErrors from '@/Components/ui/RnFormErrors.vue';
 
 const props = defineProps({
     typeOptions: Array,
@@ -37,7 +38,23 @@ const attachOptions = [
     { value: 'lease', label: 'Lease' },
 ];
 
-const submit = () => form.post(route('landlord.documents.store'), { forceFormData: true });
+const submit = () => {
+    if (!form.file) {
+        form.setError('file', 'Please choose a file to upload.');
+        return;
+    }
+
+    form
+        .transform((data) => ({
+            ...data,
+            visible_to_tenant: data.visible_to_tenant ? 1 : 0,
+            property_id: data.property_id || null,
+            tenant_id: data.tenant_id || null,
+            lease_id: data.lease_id || null,
+            documentable_type: data.documentable_type || null,
+        }))
+        .post(route('landlord.documents.store'), { forceFormData: true });
+};
 </script>
 
 <template>
@@ -50,6 +67,7 @@ const submit = () => form.post(route('landlord.documents.store'), { forceFormDat
         </RnPageHeader>
 
         <form class="mx-auto max-w-2xl space-y-6" @submit.prevent="submit">
+            <RnFormErrors :form="form" />
             <RnCard>
                 <div class="grid gap-4">
                     <RnInput v-model="form.title" label="Title" required :error="form.errors.title" />
@@ -66,7 +84,12 @@ const submit = () => form.post(route('landlord.documents.store'), { forceFormDat
             </RnCard>
             <RnCard>
                 <template #title>File</template>
-                <RnFileUploader @update:files="form.file = $event[0] || null" />
+                <RnFileUploader
+                    accepts=".pdf,.doc,.docx,.txt,image/*"
+                    label="Choose a document or image"
+                    hint="PDF, Word, or image — max 8 MB"
+                    @update:files="form.file = $event[0] || null"
+                />
                 <p v-if="form.errors.file" class="mt-2 text-sm text-rn-danger">{{ form.errors.file }}</p>
             </RnCard>
             <div class="flex justify-end"><RnButton type="submit" :loading="form.processing">Upload</RnButton></div>

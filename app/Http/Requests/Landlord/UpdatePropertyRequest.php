@@ -33,7 +33,7 @@ class UpdatePropertyRequest extends FormRequest
             'area' => ['nullable', 'numeric', 'min:0'],
             'area_unit' => ['nullable', 'string', 'max:20'],
             'photos' => ['nullable', 'array', 'max:10'],
-            'photos.*' => ['image', 'max:5120'],
+            'photos.*' => ['image', 'max:4096'],
             'remove_photos' => ['nullable', 'array'],
             'remove_photos.*' => ['string'],
         ];

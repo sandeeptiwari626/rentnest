@@ -9,6 +9,7 @@ import RnInput from '@/Components/ui/RnInput.vue';
 import RnSelect from '@/Components/ui/RnSelect.vue';
 import RnTextarea from '@/Components/ui/RnTextarea.vue';
 import RnFileUploader from '@/Components/ui/RnFileUploader.vue';
+import RnFormErrors from '@/Components/ui/RnFormErrors.vue';
 
 const props = defineProps({
     lease: Object,
@@ -42,8 +43,13 @@ const unitOptions = computed(() =>
 );
 
 const submit = () => {
-    form.transform((data) => ({ ...data, _method: 'put' }))
-        .post(route('landlord.leases.update', props.lease.id), { forceFormData: true });
+    form.transform((data) => ({
+        ...data,
+        _method: 'put',
+        lease_document: data.lease_document || undefined,
+    })).post(route('landlord.leases.update', props.lease.id), {
+        forceFormData: Boolean(form.lease_document),
+    });
 };
 </script>
 
@@ -57,6 +63,7 @@ const submit = () => {
         </RnPageHeader>
 
         <form class="mx-auto max-w-3xl space-y-6" @submit.prevent="submit">
+            <RnFormErrors :form="form" />
             <RnCard>
                 <div class="grid gap-4 sm:grid-cols-2">
                     <RnSelect v-model="form.property_id" label="Property" :options="propertyOptions" required :error="form.errors.property_id" />

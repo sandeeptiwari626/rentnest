@@ -9,6 +9,7 @@ import RnInput from '@/Components/ui/RnInput.vue';
 import RnSelect from '@/Components/ui/RnSelect.vue';
 import RnTextarea from '@/Components/ui/RnTextarea.vue';
 import RnFileUploader from '@/Components/ui/RnFileUploader.vue';
+import RnFormErrors from '@/Components/ui/RnFormErrors.vue';
 
 const props = defineProps({ categoryOptions: Array, properties: Array });
 
@@ -27,7 +28,11 @@ const propertyOptions = computed(() => [
     ...props.properties.map((p) => ({ value: p.id, label: p.name })),
 ]);
 
-const submit = () => form.post(route('landlord.expenses.store'), { forceFormData: true });
+const submit = () => {
+    form.post(route('landlord.expenses.store'), {
+        forceFormData: Boolean(form.receipt),
+    });
+};
 </script>
 
 <template>
@@ -40,6 +45,7 @@ const submit = () => form.post(route('landlord.expenses.store'), { forceFormData
         </RnPageHeader>
 
         <form class="mx-auto max-w-2xl space-y-6" @submit.prevent="submit">
+            <RnFormErrors :form="form" />
             <RnCard>
                 <div class="grid gap-4 sm:grid-cols-2">
                     <RnSelect v-model="form.category" label="Category" :options="categoryOptions" required :error="form.errors.category" />
@@ -52,7 +58,12 @@ const submit = () => form.post(route('landlord.expenses.store'), { forceFormData
             </RnCard>
             <RnCard>
                 <template #title>Receipt (optional)</template>
-                <RnFileUploader accepts=".pdf,image/*" @update:files="form.receipt = $event[0] || null" />
+                <RnFileUploader
+                    accepts=".pdf,image/*"
+                    label="Receipt PDF or image"
+                    hint="Optional — max 8 MB"
+                    @update:files="form.receipt = $event[0] || null"
+                />
             </RnCard>
             <div class="flex justify-end"><RnButton type="submit" :loading="form.processing">Save expense</RnButton></div>
         </form>
