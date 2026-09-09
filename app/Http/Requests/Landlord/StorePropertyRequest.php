@@ -14,6 +14,20 @@ class StorePropertyRequest extends FormRequest
         return $this->user()?->isLandlord() ?? false;
     }
 
+    protected function prepareForValidation(): void
+    {
+        if (! $this->hasFile('photos')) {
+            $this->request->remove('photos');
+            $this->files->remove('photos');
+        }
+
+        foreach (['bedrooms', 'bathrooms', 'area', 'rent_amount'] as $field) {
+            if ($this->input($field) === '') {
+                $this->merge([$field => null]);
+            }
+        }
+    }
+
     /**
      * @return array<string, mixed>
      */

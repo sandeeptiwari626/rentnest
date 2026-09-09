@@ -93,9 +93,18 @@ class PropertyController extends Controller
 
         $property = DB::transaction(function () use ($request, $orgId, $data) {
             $property = Property::query()->create([
-                ...$data,
                 'organization_id' => $orgId,
+                'name' => $data['name'],
+                'type' => $data['type'],
                 'status' => $data['status'] ?? PropertyStatus::Vacant->value,
+                'address' => $data['address'],
+                'city' => $data['city'],
+                'state' => $data['state'],
+                'postal_code' => $data['postal_code'],
+                'description' => $data['description'] ?? null,
+                'bedrooms' => $data['bedrooms'] ?? null,
+                'bathrooms' => $data['bathrooms'] ?? null,
+                'area' => $data['area'] ?? null,
                 'area_unit' => $data['area_unit'] ?? 'sqft',
                 'photos' => [],
             ]);
@@ -105,18 +114,27 @@ class PropertyController extends Controller
                 'property_id' => $property->id,
                 'name' => 'Unit 1',
                 'status' => PropertyStatus::Vacant,
-                'bedrooms' => $request->input('bedrooms'),
-                'bathrooms' => $request->input('bathrooms'),
-                'area' => $request->input('area'),
-                'rent_amount' => $request->input('rent_amount'),
+                'bedrooms' => $data['bedrooms'] ?? null,
+                'bathrooms' => $data['bathrooms'] ?? null,
+                'area' => $data['area'] ?? null,
+                'rent_amount' => $request->validated('rent_amount'),
             ]);
 
-            if ($request->hasFile('photos')) {
+            $photos = $request->file('photos');
+
+            if (is_array($photos) && $photos !== []) {
                 $paths = [];
-                foreach ($request->file('photos') as $photo) {
+                foreach ($photos as $photo) {
+                    if ($photo === null) {
+                        continue;
+                    }
+
                     $paths[] = $photo->store("properties/{$property->id}", 'local');
                 }
-                $property->update(['photos' => $paths]);
+
+                if ($paths !== []) {
+                    $property->update(['photos' => $paths]);
+                }
             }
 
             return $property;

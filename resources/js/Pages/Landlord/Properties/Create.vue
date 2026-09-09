@@ -32,22 +32,38 @@ const form = useForm({
 });
 
 const submit = () => {
-    form.post(route('landlord.properties.store'), {
-        forceFormData: true,
-    });
+    form
+        .transform((data) => ({
+            ...data,
+            photos: data.photos?.length ? data.photos : undefined,
+            bedrooms: data.bedrooms === '' ? null : data.bedrooms,
+            bathrooms: data.bathrooms === '' ? null : data.bathrooms,
+            area: data.area === '' ? null : data.area,
+            rent_amount: data.rent_amount === '' ? null : data.rent_amount,
+        }))
+        .post(route('landlord.properties.store'), {
+            forceFormData: form.photos.length > 0,
+        });
 };
 </script>
 
 <template>
     <Head title="Add property" />
     <LandlordLayout>
-        <RnPageHeader title="Add property" subtitle="Create a property and a default Unit 1.">
+        <RnPageHeader title="Add property" subtitle="Saving this form also creates Unit 1 with the details below.">
             <template #actions>
                 <Link :href="route('landlord.properties.index')"><RnButton variant="secondary">Cancel</RnButton></Link>
             </template>
         </RnPageHeader>
 
         <form class="mx-auto max-w-3xl space-y-6" @submit.prevent="submit">
+            <div
+                v-if="Object.keys(form.errors).length"
+                class="rounded-2xl border border-rn-danger/30 bg-rn-danger/5 px-4 py-3 text-sm text-rn-danger"
+            >
+                Please fix the highlighted fields and try again.
+            </div>
+
             <RnCard>
                 <template #title>Basics</template>
                 <div class="grid gap-4 sm:grid-cols-2">
