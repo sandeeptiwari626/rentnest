@@ -118,6 +118,24 @@ defineProps({
                         {{ payment.notes }}
                     </p>
                 </RnCard>
+
+                <RnCard v-if="payment.proof_url">
+                    <template #title>Payment proof</template>
+                    <img
+                        v-if="payment.proof_is_image"
+                        :src="payment.proof_url"
+                        alt="Payment screenshot"
+                        class="max-h-96 w-full rounded-xl border border-rn-border bg-rn-bg object-contain"
+                    >
+                    <a
+                        v-else
+                        :href="payment.proof_url"
+                        class="text-sm font-medium text-rn-accent hover:underline"
+                        target="_blank"
+                    >
+                        Download proof
+                    </a>
+                </RnCard>
             </div>
         </div>
     </TenantLayout>

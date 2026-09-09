@@ -149,6 +149,7 @@ const bulkDelete = () => {
                             <th class="px-5 py-3 font-semibold">Due</th>
                             <th class="px-5 py-3 font-semibold">Amount</th>
                             <th class="px-5 py-3 font-semibold">Status</th>
+                            <th class="px-5 py-3 font-semibold"></th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-rn-border">
@@ -175,6 +176,9 @@ const bulkDelete = () => {
                             <td class="px-5 py-3.5 text-rn-muted">{{ dateLabel(payment.due_date) }}</td>
                             <td class="px-5 py-3.5 font-semibold">{{ money(payment.amount) }}</td>
                             <td class="px-5 py-3.5"><RnBadge :color="payment.status_color">{{ payment.status_label }}</RnBadge></td>
+                            <td class="px-5 py-3.5 text-right">
+                                <Link :href="route('landlord.payments.edit', payment.id)" class="text-sm font-medium text-rn-accent hover:underline">Edit</Link>
+                            </td>
                         </tr>
                     </tbody>
                 </table>

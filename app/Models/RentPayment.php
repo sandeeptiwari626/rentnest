@@ -24,6 +24,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
     'status',
     'period_label',
     'notes',
+    'proof_path',
     'receipt_number',
 ])]
 class RentPayment extends Model

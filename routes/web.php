@@ -61,9 +61,11 @@ Route::middleware(['auth', 'verified', 'organization', 'role:landlord'])
 
         Route::get('payments/{payment}/receipt', [PaymentController::class, 'downloadReceipt'])
             ->name('payments.receipt');
+        Route::get('payments/{payment}/proof', [PaymentController::class, 'proof'])
+            ->name('payments.proof');
         Route::delete('payments/bulk-destroy', [PaymentController::class, 'bulkDestroy'])
             ->name('payments.bulk-destroy');
-        Route::resource('payments', PaymentController::class)->except(['edit', 'destroy']);
+        Route::resource('payments', PaymentController::class)->except(['destroy']);
 
         Route::get('maintenance', [MaintenanceController::class, 'index'])->name('maintenance.index');
         Route::get('maintenance/{maintenance}', [MaintenanceController::class, 'show'])->name('maintenance.show');

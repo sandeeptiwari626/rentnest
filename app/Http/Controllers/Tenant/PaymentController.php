@@ -12,8 +12,10 @@ use App\Models\RentPayment;
 use App\Support\Money;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Response as HttpResponse;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class PaymentController extends Controller
 {
@@ -110,6 +112,10 @@ class PaymentController extends Controller
                 'status_label' => $payment->status?->label(),
                 'status_color' => $payment->status?->color(),
                 'notes' => $payment->notes,
+                'proof_url' => $payment->proof_path
+                    ? route('tenant.payments.proof', $payment)
+                    : null,
+                'proof_is_image' => $this->proofIsImage($payment->proof_path),
                 'property_name' => $payment->property?->name,
                 'property_address' => collect([
                     $payment->property?->address,
@@ -147,6 +153,29 @@ class PaymentController extends Controller
         $filename = 'receipt-'.($payment->receipt_number ?? $payment->id).'.pdf';
 
         return $pdf->download($filename);
+    }
+
+    public function proof(RentPayment $payment): StreamedResponse
+    {
+        $this->ensureTenantPayment($payment);
+        $this->authorize('view', $payment);
+
+        if (! $payment->proof_path || ! Storage::disk('local')->exists($payment->proof_path)) {
+            abort(404);
+        }
+
+        return Storage::disk('local')->response($payment->proof_path);
+    }
+
+    protected function proofIsImage(?string $path): bool
+    {
+        if ($path === null || $path === '') {
+            return false;
+        }
+
+        $extension = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+
+        return in_array($extension, ['jpg', 'jpeg', 'png', 'webp', 'gif'], true);
     }
 
     protected function ensureTenantPayment(RentPayment $payment): void

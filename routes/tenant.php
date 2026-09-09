@@ -18,6 +18,7 @@ Route::middleware(['auth', 'verified', 'organization', 'role:tenant'])
         Route::get('/payments', [PaymentController::class, 'index'])->name('payments.index');
         Route::get('/payments/{payment}', [PaymentController::class, 'show'])->name('payments.show');
         Route::get('/payments/{payment}/receipt', [PaymentController::class, 'downloadReceipt'])->name('payments.receipt');
+        Route::get('/payments/{payment}/proof', [PaymentController::class, 'proof'])->name('payments.proof');
 
         Route::get('/maintenance', [MaintenanceController::class, 'index'])->name('maintenance.index');
         Route::get('/maintenance/create', [MaintenanceController::class, 'create'])->name('maintenance.create');

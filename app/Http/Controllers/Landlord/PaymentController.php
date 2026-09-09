@@ -13,12 +13,15 @@ use App\Http\Requests\Landlord\UpdatePaymentStatusRequest;
 use App\Models\Lease;
 use App\Models\RentPayment;
 use App\Notifications\RentReceivedNotification;
+use App\Support\PrivateUpload;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response as HttpResponse;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class PaymentController extends Controller
 {
@@ -114,6 +117,15 @@ class PaymentController extends Controller
             in_array($status, [PaymentStatus::Paid], true) ? $request->input('amount') : 0
         ));
 
+        $proofPath = null;
+        if ($request->hasFile('proof')) {
+            $proofPath = PrivateUpload::store(
+                $request->file('proof'),
+                'payments/'.$this->organizationId(),
+                'proof'
+            );
+        }
+
         $payment = RentPayment::query()->create([
             'organization_id' => $this->organizationId(),
             'lease_id' => $lease->id,
@@ -128,6 +140,7 @@ class PaymentController extends Controller
             'status' => $status,
             'period_label' => $request->input('period_label'),
             'notes' => $request->input('notes'),
+            'proof_path' => $proofPath,
             'receipt_number' => $status === PaymentStatus::Paid ? $this->nextReceiptNumber() : null,
         ]);
 
@@ -166,6 +179,10 @@ class PaymentController extends Controller
                 'status_color' => $payment->status?->color(),
                 'period_label' => $payment->period_label,
                 'notes' => $payment->notes,
+                'proof_url' => $payment->proof_path
+                    ? route('landlord.payments.proof', $payment)
+                    : null,
+                'proof_is_image' => $this->proofIsImage($payment->proof_path),
                 'receipt_number' => $payment->receipt_number,
                 'tenant' => $payment->tenant,
                 'property' => $payment->property,
@@ -179,18 +196,68 @@ class PaymentController extends Controller
         ]);
     }
 
+    public function edit(RentPayment $payment): Response
+    {
+        $this->authorize('update', $payment);
+
+        $payment->load(['tenant:id,name', 'property:id,name']);
+
+        return Inertia::render('Landlord/Payments/Edit', [
+            'payment' => [
+                'id' => $payment->id,
+                'lease_id' => $payment->lease_id,
+                'lease_label' => collect([
+                    $payment->property?->name,
+                    $payment->tenant?->name,
+                ])->filter()->implode(' · '),
+                'amount' => (float) $payment->amount,
+                'amount_paid' => (float) $payment->amount_paid,
+                'due_date' => $payment->due_date?->toDateString(),
+                'payment_date' => $payment->payment_date?->toDateString(),
+                'payment_method' => $payment->payment_method?->value,
+                'reference_number' => $payment->reference_number,
+                'status' => $payment->status?->value,
+                'period_label' => $payment->period_label,
+                'notes' => $payment->notes,
+                'proof_url' => $payment->proof_path
+                    ? route('landlord.payments.proof', $payment)
+                    : null,
+                'proof_is_image' => $this->proofIsImage($payment->proof_path),
+            ],
+            'statusOptions' => $this->enumOptions(PaymentStatus::class),
+            'methodOptions' => $this->enumOptions(PaymentMethod::class),
+        ]);
+    }
+
     public function update(UpdatePaymentStatusRequest $request, RentPayment $payment): RedirectResponse
     {
         $this->authorize('update', $payment);
 
         $wasPaid = $payment->status === PaymentStatus::Paid;
         $status = PaymentStatus::from($request->string('status')->toString());
-        $data = $request->validated();
+        $data = $request->safe()->except(['proof', 'remove_proof']);
 
         if ($status === PaymentStatus::Paid) {
             $data['amount_paid'] = $data['amount_paid'] ?? $payment->amount;
             $data['payment_date'] = $data['payment_date'] ?? now()->toDateString();
             $data['receipt_number'] = $payment->receipt_number ?: $this->nextReceiptNumber();
+        }
+
+        if ($request->boolean('remove_proof') && $payment->proof_path) {
+            Storage::disk('local')->delete($payment->proof_path);
+            $data['proof_path'] = null;
+        }
+
+        if ($request->hasFile('proof')) {
+            if ($payment->proof_path) {
+                Storage::disk('local')->delete($payment->proof_path);
+            }
+
+            $data['proof_path'] = PrivateUpload::store(
+                $request->file('proof'),
+                'payments/'.$this->organizationId(),
+                'proof'
+            );
         }
 
         $payment->update($data);
@@ -204,7 +271,20 @@ class PaymentController extends Controller
             }
         }
 
-        return back()->with('success', 'Payment status updated.');
+        return redirect()
+            ->route('landlord.payments.show', $payment)
+            ->with('success', 'Payment updated.');
+    }
+
+    public function proof(RentPayment $payment): StreamedResponse
+    {
+        $this->authorize('view', $payment);
+
+        if (! $payment->proof_path || ! Storage::disk('local')->exists($payment->proof_path)) {
+            abort(404);
+        }
+
+        return Storage::disk('local')->response($payment->proof_path);
     }
 
     public function bulkDestroy(BulkDestroyPaymentsRequest $request): RedirectResponse
@@ -277,6 +357,17 @@ class PaymentController extends Controller
         }
 
         return $prefix.str_pad((string) $sequence, 4, '0', STR_PAD_LEFT);
+    }
+
+    protected function proofIsImage(?string $path): bool
+    {
+        if ($path === null || $path === '') {
+            return false;
+        }
+
+        $extension = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+
+        return in_array($extension, ['jpg', 'jpeg', 'png', 'webp', 'gif'], true);
     }
 
     /**

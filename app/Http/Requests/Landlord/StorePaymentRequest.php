@@ -35,6 +35,7 @@ class StorePaymentRequest extends FormRequest
             'status' => ['nullable', Rule::enum(PaymentStatus::class)],
             'period_label' => ['nullable', 'string', 'max:120'],
             'notes' => ['nullable', 'string', 'max:2000'],
+            'proof' => ['nullable', 'file', 'mimes:jpg,jpeg,png,webp,pdf', 'max:8192'],
         ];
     }
 }
